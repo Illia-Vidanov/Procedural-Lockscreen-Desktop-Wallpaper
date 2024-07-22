@@ -16,7 +16,7 @@
  Creating own scripts:
  1. Script must have extension ".lua" or ".exe" and be located at 'scripts' folder in the same directory as Generate image
  2. In case of lua width and height passed as parametrs, and return value in form of byte-encoded string is expected
- 3. In case of exe first is being passed width, then height and then full path to image. It is expected for exe file to generate iage on it's own. (output from std::cout will be printed in the same console)
+ 3. In case of exe first is being passed width, then height and then full path to image. It is expected for exe file to generate .png image on it's own. (output from std::cout will be printed in the same console where Generate.exe is executed)
  
 
  Library dependencies:
