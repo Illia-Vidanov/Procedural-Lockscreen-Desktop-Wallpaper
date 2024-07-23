@@ -7,6 +7,7 @@
 #include <string>
 #include <cstring>
 
+#include "nlohmann/json.hpp"
 #include "random/random.hpp"
 
 #include "FlagParser.hpp"
@@ -18,27 +19,39 @@
 
 void GenerateImage(const char **arg_begin, const char **arg_end)
 {
+    std::shared_ptr<nlohmann::json> json;
+
     if(!std::filesystem::exists(kJsonName))
     {
-        InitializeJson(arg_begin, arg_end);
+        json = InitializeJson(arg_begin, arg_end);
         std::cout << kJsonName << " generated";
     }
+    else
+        json = GetJsonFile(kJsonName);
 
-    ImageData image_data = GetImageDataFromJson(kJsonName);
+    ImageData image_data = GetImageDataFromJson(json);
     std::cout << "Data from json was succesfully read\n";
 
     std::vector<std::string> scripts = GatherScripts();
 
     if(scripts.size() == 0)
     {
-        std::cout << "No scripts found, generating blanck image\n";
         GenerateBlanckImage(image_data);
+        std::cout << "No scripts found, blanck image generated\n";
     }
 
-    const std::string &script = scripts[effolkronium::random_static::get(0, static_cast<int>(scripts.size()) - 1)];
-    std::cout << "Script choosen: \"" << script << "\"\n";
+    int index = effolkronium::random_static::get(0, static_cast<int>(scripts.size()) - 1);
+    if(scripts.size() > 1 && GetLastScriptFromJson(json) == scripts[index])
+    {
+        std::swap(scripts[index], scripts.back());
+        index = effolkronium::random_static::get(0, static_cast<int>(scripts.size()) - 2);
+    }
 
-    ProcessScript(image_data, script);
+    (*json)[kLastScriptKey] = scripts[index];
+    WriteJsonToFile(json, kJsonName);
+    std::cout << "Script choosen: \"" << scripts[index] << "\"\n";
+
+    ProcessScript(image_data, scripts[index]);
 }
 
 void GenerateBlanckImage(const ImageData &image_data)
