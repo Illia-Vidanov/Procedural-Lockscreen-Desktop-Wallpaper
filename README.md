@@ -10,7 +10,7 @@
  Setup flags:
  1. -r - skip setup of registry keys on windows (part that requires administrator rights)
  2. -w(number) and -h(number) - set custom width and height for the image respectevly
- 3. -i - skip setup of stock image (use it if "Image.png" already exists and you don't want it to be regenerated) (part that requires administrator rights)
+ 3. -i - skip setup of stock image (use it if "Image.png" already exists and you don't want it to be regenerated)
  4. -j - skip setup of json
 
  Creating own scripts:

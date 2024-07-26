@@ -44,7 +44,7 @@ OBJS := $(foreach file,$(SOURCES),$(file:$(SOURCEDIR)/%.$(SOURCE_FILES_EXTENTION
 
 # Execute before/after compile
 EXECUTE_BEFORE_COMPILE :=
-EXECUTE_AFTER_COMPILE :=
+EXECUTE_AFTER_COMPILE := "C:/Programming/Windows SDK/bin/10.0.26100.0/x86/mt.exe" -manifest Setup.exe.manifest -outputresource:$(BUILDDIR)/Setup.exe;
 $(shell $(EXECUTE_BEFORE_COMPILE))
 
 
