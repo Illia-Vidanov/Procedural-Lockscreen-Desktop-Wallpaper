@@ -20,8 +20,6 @@ void CreateImage(const ImageData &image_data, const void *data)
                   << "Try running again\n";
         std::terminate();
     }
-
-    std::cout << "Succesfully created image at \'" << image_data.path << "\' with resolution: " << image_data.width << 'x' << image_data.height << '\n';
 }
 
 auto AddPadding(const int width, const int height, const void *data) -> void*

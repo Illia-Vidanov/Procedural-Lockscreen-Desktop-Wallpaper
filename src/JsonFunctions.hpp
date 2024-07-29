@@ -8,7 +8,9 @@
 
 #include "ImageData.hpp"
 
-auto InitializeJson(const char **args_begin, const char **args_end) -> std::shared_ptr<nlohmann::json>;
+class Flags;
+
+auto InitializeJson(const Flags &flags) -> std::shared_ptr<nlohmann::json>;
 auto GetImageDataFromJson(std::shared_ptr<nlohmann::json> json) -> ImageData;
 auto GetLastScriptFromJson(std::shared_ptr<nlohmann::json> json) -> std::string;
 auto AddCurrentPathToString(const std::string &str) -> std::string;

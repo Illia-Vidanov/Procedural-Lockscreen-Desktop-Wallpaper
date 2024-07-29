@@ -5,6 +5,7 @@
 #include <filesystem>
 #include <algorithm>
 #include <string>
+#include <exception>
 #include <cstring>
 
 #include "nlohmann/json.hpp"
@@ -17,13 +18,13 @@
 #include "Constants.hpp"
 #include "JsonFunctions.hpp"
 
-void GenerateImage(const char **arg_begin, const char **arg_end)
+void GenerateImage(const Flags &flags)
 {
     std::shared_ptr<nlohmann::json> json;
 
     if(!std::filesystem::exists(kJsonName))
     {
-        json = InitializeJson(arg_begin, arg_end);
+        json = InitializeJson(flags);
         std::cout << kJsonName << " generated";
     }
     else
@@ -52,6 +53,7 @@ void GenerateImage(const char **arg_begin, const char **arg_end)
     std::cout << "Script choosen: \"" << scripts[index] << "\"\n";
 
     ProcessScript(image_data, scripts[index]);
+    std::cout << "Succesfully created image at \'" << image_data.path << "\' with resolution: " << image_data.width << 'x' << image_data.height << '\n';
 }
 
 void GenerateBlanckImage(const ImageData &image_data)
@@ -69,7 +71,7 @@ void GenerateBlanckImage(const ImageData &image_data)
 std::vector<std::string> GatherScripts()
 {
     std::vector<std::string> scripts;
-    for(const auto &dir_entry : std::filesystem::recursive_directory_iterator("scripts"))
+    for(const auto &dir_entry : std::filesystem::recursive_directory_iterator(AddCurrentPathToString(kScriptsFolderName)))
     {
         const auto &ext = dir_entry.path().extension();
         if(ext == ".exe" || ext == ".lua")
@@ -93,7 +95,7 @@ void ProcessScript(const ImageData &image_data, const std::string &script)
         break;
     default:
         std::cout << "Some ultra rare error in process of executing script";
-        break;;
+        break;
     }
 }
 
@@ -111,5 +113,12 @@ void ProcessLua(const ImageData &image_data, const std::string &script)
 void ProcessExe(const ImageData &image_data, const std::string &script)
 {
     std::string args(std::to_string(image_data.width) + " " + std::to_string(image_data.height) + " \"" + image_data.path + '\"');
-    ExecuteProgram(script.c_str(), &args[0]);
+    int exit_code;
+    if((exit_code = ExecuteProgram(script.c_str(), &args[0])))
+    {
+        std::cout << "Error executing " << script << '\n'
+                  << "Exit code: " <<  exit_code << '\n'
+                  << "Terminating";
+        std::terminate();
+    }
 }

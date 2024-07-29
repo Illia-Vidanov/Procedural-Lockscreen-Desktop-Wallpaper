@@ -1,9 +1,14 @@
 #ifndef WIN_SETUP_HPP
 #define WIN_SETUP_HPP
 
-void Setup(const char **args_begin, const char **args_end);
+class Flags;
+
+void Setup(const Flags &flags);
+void CheckIntegrity();
+void CreateBat();
 void SetupRegistry();
-void InitialGenerate(const char **args_begin, const char **args_end);
-void TerminateRegistry();
+void InitialGenerate(const Flags &flags);
+void AddTaskToScheduler(const Flags &flags);
+void TerminateAdministrator();
 
 #endif // WIN_SETUP_HPP

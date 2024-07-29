@@ -3,39 +3,90 @@
 #include <string>
 #include <stdexcept>
 
-// Overall it's pretty lazy approach of implementing this, but it works
-// For future it's possible to use better search algorithm with aproximation for the fact that it must be at the start of the
 
-std::string GetFlag(const std::string &str, const std::string &flag)
+
+bool StringStartsWith(const std::string &prefix, const std::string &str)
 {
-    if(str.find(flag) != 0)
-        return "";
+    for(std::size_t i = 0; i < prefix.size(); i++)
+    {
+        if(str[i] != prefix[i])
+            return false;
+    }
 
-    if(flag.length() > str.length())
-        return "";
-
-    return str.substr(flag.length(), str.length() - flag.length());
+    return true;
 }
 
-std::string GetFlag(const char **args_begin, const char **args_end, const std::string &flag)
+auto Flags::GetArgsAsString(const std::string &delimetr) const -> std::string
+{
+    const char **it = begin_;
+    std::string result(*it);
+    it++;
+    while(it != end_)
+    {
+        result += delimetr;
+        result += (*it);
+        it++;
+    }
+
+    return result;
+}
+
+auto Flags::Count(const std::string &flag, const char **args_begin, const char **args_end) -> std::size_t
+{
+    std::size_t count = 0;
+
+    for(; args_begin != args_end; args_begin++)
+        count += StringStartsWith(flag, *args_begin);
+
+    return count;
+}
+
+auto Flags::Contains(const std::string &flag, const char **args_begin, const char **args_end) -> const char **
 {
     for(; args_begin != args_end; args_begin++)
     {
-        if(std::string(*args_begin).find(flag) != std::string::npos)
-            return GetFlag(*args_begin, flag);
+        if(StringStartsWith(flag, *args_begin))
+            return args_begin;
+    }
+
+    return nullptr;
+}
+
+auto Flags::Get(const std::string &flag, const std::string &str) -> std::string
+{
+    // Goes first because StringStartsWith do not perform bounds checking
+    if(flag.size() >= str.size())
+        return "";
+
+    if(StringStartsWith(flag, str))
+        return "";
+
+    return str.substr(flag.size(), str.size() - flag.size());
+}
+
+auto Flags::Get(std::string flag, const char **args_begin, const char **args_end) -> std::string
+{
+    flag += kDefPrefix;
+    for(; args_begin != args_end; args_begin++)
+    {
+        std::string value = Get(*args_begin, flag);
+        if(value != "")
+            return value;
     }
 
     return "";
 }
 
-std::string GetFlag(const char **args_begin, const char **args_end, const std::string &flag, const char ***pos)
+auto Flags::Get(std::string flag, const char **&pos, const char **args_begin, const char **args_end) -> std::string
 {
+    flag += kDefPrefix;
     for(; args_begin != args_end; args_begin++)
     {
-        if(std::string(*args_begin).find(flag) != std::string::npos)
+        std::string value = Get(*args_begin, flag);
+        if(value != "")
         {
-            *pos = args_begin;
-            return GetFlag(*args_begin, flag);
+            pos = args_begin;
+            return value;
         }
     }
 
@@ -43,13 +94,21 @@ std::string GetFlag(const char **args_begin, const char **args_end, const std::s
     return "";
 }
 
-const char **FlagExists(const char **args_begin, const char **args_end, const std::string &flag)
+void Flags::Parse()
 {
-    for(; args_begin != args_end; args_begin++)
+    for(const char **it = begin_; it < end_; it++)
     {
-        if(std::string(*args_begin).find(flag) == 0)
-            return args_begin;
-    }
+        const std::string str(*it);
+        if(StringStartsWith(prefix_, str))
+        {
+            std::size_t sep_pos = str.find(separator_);
+            if(sep_pos == std::string::npos)
+            {
+                flags_[str];
+                continue;
+            }
 
-    return nullptr;
+            flags_[str] = str.substr(sep_pos);
+        }
+    }
 }

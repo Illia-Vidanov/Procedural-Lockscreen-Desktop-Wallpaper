@@ -14,83 +14,122 @@
 #include "JsonFunctions.hpp"
 
 // Setting up registry keys
-void Setup(const char **args_begin, const char **args_end)
+void Setup(const Flags &flags)
 {
-    if(!FlagExists(args_begin, args_end, "-j"))
+    if(!flags.Contains("-i"))
     {
-        InitializeJson(args_begin, args_end);
+        CheckIntegrity();
+        std::cout << "Integrity checked\n";
+    }
+
+    if(!flags.Contains("-j"))
+    {
+        InitializeJson(flags);
         std::cout << kJsonName << " generated\n";
     }
 
-    if(!FlagExists(args_begin, args_end, "-r"))
-        SetupRegistry();
+    if(!flags.Contains("-b"))
+    {
+        CreateBat();
+        std::cout << "Batch file " << kBatName << " created\n";
+    }
 
-    if(!FlagExists(args_begin, args_end, "-i"))
-        InitialGenerate(args_begin, args_end);
+    if(!flags.Contains("-r"))
+    {
+        SetupRegistry();
+        std::cout << "Registry keys set up\n";
+    }
+
+    if(!flags.Contains("-g"))
+        InitialGenerate(flags); // Handels output on its own
+
+    if(!flags.Contains("-t"))
+    {
+        AddTaskToScheduler(flags);
+        std::cout << "Task added to task scheduler";
+    }
+}
+
+void CheckIntegrity()
+{
+    if(!std::filesystem::exists(kGenerateName))
+    {
+        std::cout << kGenerateName << " is not in the same folder as Setup.exe\n"
+                    "Terminating";
+        std::terminate();
+    }
+}
+
+void CreateBat()
+{
+    std::ofstream file(kBatName);
+    if (!file.is_open())
+    {
+        std::cout << "Failed to open bat file\n"
+                     "Terminating";
+        std::terminate();
+    }
+
+    file << "cd " << std::filesystem::current_path() << '\n';
+    file << kGenerateName;
+
+    file.close();
 }
 
 void SetupRegistry()
 {
+    constexpr static const wchar_t *kPersonalizationFolder = L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\PersonalizationCSP";
+    constexpr static const wchar_t *kImagePathKey = L"LockScreenImagePath";
+
     winreg::RegResult res;
     winreg::RegKey key;
 
-    res = key.TryOpen(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\PersonalizationCSP");
+    res = key.TryOpen(HKEY_LOCAL_MACHINE, kPersonalizationFolder);
     // If key doesn't exist
     if(res.Code() == ERROR_FILE_NOT_FOUND)
     {
-        res = key.TryCreate(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\PersonalizationCSP");
-        std::cout << "Created registry key \'SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\PersonalizationCSP\'\n";
+        res = key.TryCreate(HKEY_LOCAL_MACHINE, kPersonalizationFolder);
     }
     // If other error was encountered
     else if(!res)
     {
-        std::wcout << L"Unable to open registry key \'SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\PersonalizationCSP\'\n"
+        std::wcout << L"Unable to open registry folder \'" << kPersonalizationFolder << L"\n"
                       L"Error: " << res.ErrorMessage() << '\n';
-        TerminateRegistry();
+        TerminateAdministrator();
     }
-    // If was able to open
-    else
-        std::cout << "Found registry key \'SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\PersonalizationCSP\'\n";
 
-    // If wasn''t able to create or open
+    // If wasn't able to create or open
     if(!res)
     {
-        std::wcout << L"Unable to create registry key \'SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\PersonalizationCSP\'\n"
+        std::wcout << L"Unable to create registry folder \'" << kPersonalizationFolder << L"\n"
                       L"Error: " << res.ErrorMessage() << '\n';
-        TerminateRegistry();
+        TerminateAdministrator();
     }
 
-    std::wstring image_path = std::filesystem::current_path().wstring() + L"\\Image.png";
-    res = key.TrySetStringValue(L"LockScreenImagePath", image_path);
+    std::wstring image_path = std::filesystem::current_path().wstring() + kImageNameW;
+    res = key.TrySetStringValue(kImagePathKey, image_path);
     // If wasn't able to set value
     if(!res)
     {
-        std::wcout << L"Unable to set registry key string value \'LockScreenImagePath\' at key \'SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\PersonalizationCSP\'.\n"
+        std::wcout << L"Unable to set registry key string value " << kImagePathKey << " at folder \'" << kPersonalizationFolder << L"\n"
                       L"Error: " << res.ErrorMessage() << '\n';
-        TerminateRegistry();
+        TerminateAdministrator();
     }
-
-    std::wcout << L"Set registry key string value \'LockScreenImagePath\' of \'SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\PersonalizationCSP\' to \"" << image_path << L"\"\n";
 }
 
-void InitialGenerate(const char **args_begin, const char **args_end)
+void InitialGenerate(const Flags &flags)
 {
-    std::string args(*args_begin);
-    args_begin++;
-    while(args_begin != args_end)
-    {
-        args += ' ';
-        args += (*args_begin);
-        args_begin++;
-    }
-    
-    ExecuteProgram((std::filesystem::current_path().string() + "\\Generate.exe").c_str(), &args[0]);
+    if(ExecuteProgram((AddCurrentPathToString("Generate.exe")).c_str(), &flags.GetArgsAsString()[0]))
+        std::cout << "Error generating initial image\n";
 }
 
-void TerminateRegistry()
+void AddTaskToScheduler(const Flags &flags)
 {
-    std::wcout << L"Termination\n"
-                  L"Try opening with administrator rights\n";
-    std::cin.ignore();
+}
+
+void TerminateAdministrator()
+{
+    std::cout << "Terminating\n"
+                 "Try opening with administrator rights\n";
     std::terminate();
 }

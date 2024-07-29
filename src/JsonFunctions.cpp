@@ -5,6 +5,7 @@
 #include <filesystem>
 #include <fstream>
 #include <memory>
+#include <exception>
 
 #include "nlohmann/json.hpp"
 
@@ -13,10 +14,10 @@
 #include "FlagParser.hpp"
 #include "ImageData.hpp"
 
-auto InitializeJson(const char **args_begin, const char **args_end) -> std::shared_ptr<nlohmann::json>
+auto InitializeJson(const Flags &flags) -> std::shared_ptr<nlohmann::json>
 {
-    int width = std::atoi(GetFlag(args_begin, args_end, "-w").c_str());
-    int height = std::atoi(GetFlag(args_begin, args_end, "-h").c_str());
+    int width = std::atoi(flags.Get("-w").c_str());
+    int height = std::atoi(flags.Get("-h").c_str());
 
     if(width <= 0 || height <= 0)
         GetScreenResolution(width, height);
@@ -87,7 +88,7 @@ auto GetJsonFile(const std::string &json_path) -> std::shared_ptr<nlohmann::json
     std::ifstream file(json_path);
     if (!file.is_open())
     {
-        std::cout << "\n Failed to open json file. Terminating";
+        std::cout << "Failed to open json file. Terminating";
         std::terminate();
     }
 
@@ -103,8 +104,8 @@ void WriteJsonToFile(std::shared_ptr<nlohmann::json> json, const std::string &pa
     std::ofstream file(path);
     if (!file.is_open())
     {
-        std::cout << "\n Failed to open json file";
-        return;
+        std::cout << "Failed to open json file. Terminating";
+        std::terminate();
     }
 
     file << std::setw(4) << (*json);

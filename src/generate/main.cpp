@@ -2,13 +2,12 @@
 #include <windows.h>
 
 #include "GenerateImage.hpp"
-#include "Api.hpp"
+#include "FlagParser.hpp"
 
 int main(int argc, const char **argv)
 {
-    GenerateImage(argv, argv + argc);
-    
-    std::cout << "Image generated" << std::endl;
-    MySleep(1);
+    Flags flags(argc, argv);
+    GenerateImage(flags);
+
     return 0;
 }

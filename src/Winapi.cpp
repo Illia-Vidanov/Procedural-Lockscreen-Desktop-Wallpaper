@@ -2,8 +2,9 @@
 
 #include <windows.h>
 #include <iostream>
+#include <exception>
 
-void ExecuteProgram(const char *program_path, char *args)
+int ExecuteProgram(const char *program_path, char *args)
 {
     SECURITY_ATTRIBUTES sa = { sizeof(SECURITY_ATTRIBUTES), NULL, TRUE };
 
@@ -49,20 +50,20 @@ void ExecuteProgram(const char *program_path, char *args)
     while(ReadFile(h_read, buffer, sizeof(buffer), &bytesRead, NULL) && bytesRead > 0)
         std::cout.write(buffer, bytesRead);
     
+    long unsigned int exit_code = 0; // what is 'long unsigned int'???? It's not uint32_t and not uint64_t
+    GetExitCodeProcess(pi.hProcess, &exit_code);
+
     CloseHandle(h_read);
     CloseHandle(pi.hProcess);
     CloseHandle(pi.hThread);
+    
+    return exit_code;
 }
 
 void GetScreenResolution(int &width, int &height)
 {
     width = GetSystemMetrics(SM_CXSCREEN);
     height = GetSystemMetrics(SM_CYSCREEN);
-}
-
-void MySleep(int time_seconds)
-{
-    Sleep(time_seconds * 1000);
 }
 
 void TerminateExecute()
