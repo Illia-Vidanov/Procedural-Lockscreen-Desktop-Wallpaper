@@ -14,6 +14,7 @@ auto InitializeJson(const Flags &flags) -> std::shared_ptr<nlohmann::json>;
 auto GetImageDataFromJson(std::shared_ptr<nlohmann::json> json) -> ImageData;
 auto GetLastScriptFromJson(std::shared_ptr<nlohmann::json> json) -> std::string;
 auto AddCurrentPathToString(const std::string &str) -> std::string;
+auto AddCurrentPathToString(const std::wstring &str) -> std::wstring;
 auto GetJsonFile(const std::string &json_path) -> std::shared_ptr<nlohmann::json>;
 void WriteJsonToFile(std::shared_ptr<nlohmann::json> json, const std::string &path);
 

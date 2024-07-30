@@ -116,3 +116,8 @@ auto AddCurrentPathToString(const std::string &str) -> std::string
 {
     return std::filesystem::current_path().string() + "\\" + str;
 }
+
+auto AddCurrentPathToString(const std::wstring &str) -> std::wstring
+{
+    return std::filesystem::current_path().wstring() + L"\\" + str;
+}

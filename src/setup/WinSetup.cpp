@@ -28,12 +28,6 @@ void Setup(const Flags &flags)
         std::cout << kJsonName << " generated\n";
     }
 
-    if(!flags.Contains("-b"))
-    {
-        CreateBat();
-        std::cout << "Batch file " << kBatName << " created\n";
-    }
-
     if(!flags.Contains("-r"))
     {
         SetupRegistry();
@@ -46,7 +40,7 @@ void Setup(const Flags &flags)
     if(!flags.Contains("-t"))
     {
         AddTaskToScheduler(flags);
-        std::cout << "Task added to task scheduler";
+        std::cout << "Task added to task scheduler\n";
     }
 }
 
@@ -60,26 +54,10 @@ void CheckIntegrity()
     }
 }
 
-void CreateBat()
-{
-    std::ofstream file(kBatName);
-    if (!file.is_open())
-    {
-        std::cout << "Failed to open bat file\n"
-                     "Terminating";
-        std::terminate();
-    }
-
-    file << "cd " << std::filesystem::current_path() << '\n';
-    file << kGenerateName;
-
-    file.close();
-}
-
 void SetupRegistry()
 {
-    constexpr static const wchar_t *kPersonalizationFolder = L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\PersonalizationCSP";
-    constexpr static const wchar_t *kImagePathKey = L"LockScreenImagePath";
+    constexpr static LPCWSTR kPersonalizationFolder = L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\PersonalizationCSP";
+    constexpr static LPCWSTR kImagePathKey = L"LockScreenImagePath";
 
     winreg::RegResult res;
     winreg::RegKey key;
@@ -87,15 +65,14 @@ void SetupRegistry()
     res = key.TryOpen(HKEY_LOCAL_MACHINE, kPersonalizationFolder);
     // If key doesn't exist
     if(res.Code() == ERROR_FILE_NOT_FOUND)
-    {
         res = key.TryCreate(HKEY_LOCAL_MACHINE, kPersonalizationFolder);
-    }
     // If other error was encountered
     else if(!res)
     {
         std::wcout << L"Unable to open registry folder \'" << kPersonalizationFolder << L"\n"
-                      L"Error: " << res.ErrorMessage() << '\n';
-        TerminateAdministrator();
+                      L"Error: " << res.ErrorMessage() << L"\n"
+                      L"Try opening with administrator rights\n";
+        return;
     }
 
     // If wasn't able to create or open
@@ -103,7 +80,7 @@ void SetupRegistry()
     {
         std::wcout << L"Unable to create registry folder \'" << kPersonalizationFolder << L"\n"
                       L"Error: " << res.ErrorMessage() << '\n';
-        TerminateAdministrator();
+        return;
     }
 
     std::wstring image_path = std::filesystem::current_path().wstring() + kImageNameW;
@@ -113,7 +90,7 @@ void SetupRegistry()
     {
         std::wcout << L"Unable to set registry key string value " << kImagePathKey << " at folder \'" << kPersonalizationFolder << L"\n"
                       L"Error: " << res.ErrorMessage() << '\n';
-        TerminateAdministrator();
+        return;
     }
 }
 
@@ -125,11 +102,20 @@ void InitialGenerate(const Flags &flags)
 
 void AddTaskToScheduler(const Flags &flags)
 {
-}
+    std::string args("-Command \"Unregister-ScheduledTask -TaskName \\\"");
+    args += kDefTaskName;
+    args += "\\\" -Confirm:$false -ErrorAction SilentlyContinue; Register-ScheduledTask -TaskName \\\"";
+    args += kDefTaskName;
+    args += "\\\" -Trigger (New-CimInstance -CimClass (Get-CimClass -Namespace ROOT\\Microsoft\\Windows\\TaskScheduler -ClassName MSFT_TaskSessionStateChangeTrigger) -Property @{StateChange = 8";
 
-void TerminateAdministrator()
-{
-    std::cout << "Terminating\n"
-                 "Try opening with administrator rights\n";
-    std::terminate();
+    //args += "; UserId = \\\"";
+    //args += "Ілля";
+    //args += "\\\"";
+
+    args += "} -ClientOnly) -Action (New-ScheduledTaskAction -Execute \\\"";
+    args += kGenerateName;
+    args += "\\\" -WorkingDirectory \\\"";
+    args += std::filesystem::current_path().string();
+    args += "\\\") -Settings (New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -StartWhenAvailable)\"";
+    ExecuteProgram("C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe", &args[0]);
 }

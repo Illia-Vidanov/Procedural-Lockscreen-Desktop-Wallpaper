@@ -12,7 +12,7 @@ int ExecuteProgram(const char *program_path, char *args)
     if(!CreatePipe(&h_read, &h_write, &sa, 0))
     {
         std::cout << "Wasn't able to create anonymous pipe\n";
-        TerminateExecute();
+        TerminateAdmin();
     }
 
     PROCESS_INFORMATION pi;
@@ -25,7 +25,8 @@ int ExecuteProgram(const char *program_path, char *args)
     si.hStdOutput = h_write;
     si.dwFlags |= STARTF_USESTDHANDLES;
 
-    if(!CreateProcessA(
+    if(!CreateProcessAsUserA(
+        NULL,
         program_path,
         args,
         NULL,
@@ -38,8 +39,8 @@ int ExecuteProgram(const char *program_path, char *args)
         &pi
     ))
     {
-        std::cout << "Wasn't able to create child process in order to open: " << program_path << '\n';
-        TerminateExecute();
+        std::cout << "Wasn't able to create child process in order to open \"" << program_path << "\" with error " << GetLastError() << '\n';
+        TerminateAdmin();
     }
 
     //WaitForSingleObject(&pi, INFINITE);
@@ -66,10 +67,9 @@ void GetScreenResolution(int &width, int &height)
     height = GetSystemMetrics(SM_CYSCREEN);
 }
 
-void TerminateExecute()
+void TerminateAdmin()
 {
     std::wcout << L"Termination\n"
                   L"Try opening with administrator rights\n";
-    std::cin.ignore();
     std::terminate();
 }

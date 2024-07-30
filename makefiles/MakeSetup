@@ -11,7 +11,7 @@ APP_NAME := Setup.exe
 DEBUG := -g
 COMPILER := g++
 FLAGS := -Wall -Wextra -Wdeprecated -pedantic-errors -fmax-errors=10 -Wshadow -std=c++17 #-funroll-loops
-LIBS := -lsimdjson
+LIBS := -lsimdjson -ltaskschd -lole32 -loleaut32 -luuid
 INCLUDES := -I$(SOURCEDIR) -I$(SOURCEDIR)/..
 ARGS :=
 ECHO := @
@@ -44,7 +44,7 @@ OBJS := $(foreach file,$(SOURCES),$(file:$(SOURCEDIR)/%.$(SOURCE_FILES_EXTENTION
 
 # Execute before/after compile
 EXECUTE_BEFORE_COMPILE :=
-EXECUTE_AFTER_COMPILE := "C:/Programming/Windows SDK/bin/10.0.26100.0/x86/mt.exe" -manifest Setup.exe.manifest -outputresource:$(BUILDDIR)/Setup.exe;
+EXECUTE_AFTER_COMPILE := C:/Programming/WindowsSDK/bin/10.0.26100.0/x86/mt.exe -manifest Setup.exe.manifest -outputresource:$(BUILDDIR)/Setup.exe;
 $(shell $(EXECUTE_BEFORE_COMPILE))
 
 

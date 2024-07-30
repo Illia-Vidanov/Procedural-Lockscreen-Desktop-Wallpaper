@@ -15,9 +15,8 @@
  2. '-r' - skip setup of registry keys on windows (part that requires administrator rights)
  3. '-g' - skip setup of initial call of Generate.exe (use it if "Image.png" already exists and you don't want it to be regenerated)
  4. '-j' - skip setup of json (use it if you made some changes in json and don't want it to be overwritten)
- 5. '-b' - skip setup of batch file (use it if you made some changes in batch file and don't want it to be overwritten)
- 6. '-i' - skip integrity check
- 7. '-t' - skip setup of task in task scheduler ()
+ 5. '-i' - skip integrity check
+ 6. '-t' - skip setup of task in task scheduler (part that requires administrator rights)
  clearing:
 
  ### Creating own scripts:
