@@ -2,6 +2,11 @@
  Program that generates a new lock screen for you to enjoy)
  Only supports windows for now
 
+ ### How it works
+ In order to set custom lock screen image you have to craete key "LockScreenImagePath" in folder "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP". After that you can just change image in that path to change lockscreen image.
+ Also to generate image on every login program sets up task in task scheduler with trigger "OnWorkstationUnlock" with scrript Generate.exe to execute
+ Generate.exe chooses random script from folder scripts and parses it if it's lua or just executes it if it's .exe file.
+
  ### Instalation:
  1. Download files
  2. Extract them in any folder
@@ -17,7 +22,11 @@
  - '-j' - skip setup of json (use it if you made some changes in json and don't want it to be overwritten)
  - '-i' - skip integrity check
  - '-t' - skip setup of task in task scheduler (part that requires administrator rights)
- clearing:
+ cleaning (when any of this flags are present, nothing is being generated):
+ - '-clear_all' - remove files, registry keys and task in task scheduler
+ - '-clear_files' - remove files (props.json and Image.png)
+ - '-clear_registry' - remove registry keys
+ - '-clear_task' - remove task from taskscheduler (if custom task name was set specify it using apropriate flag '-task_name=(task name)'. You can also specify custom powershell path)
  task scheduler:
  - '-user_name=(user name)' - set user name who's login will change lock screen image (if empty login of any user will generate new image)
  - '-powershell_path=(path to powershell.exe)' - set custom path to powershell executable (currently it is required to setup task in task scheduler)
@@ -42,5 +51,5 @@
  ### TODO:
  - [x] Add embeded manifest
  - [x] Automatically add task to task schduler
- - [ ] Add clean up functions (remove registry keys, clear all files, remove task from task scheduler)
+ - [x] Add clean up functions (remove registry keys, clear all files, remove task from task scheduler)
  - [ ] More default scripts!

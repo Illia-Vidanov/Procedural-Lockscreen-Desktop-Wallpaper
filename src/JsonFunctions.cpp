@@ -32,6 +32,8 @@ auto InitializeJson(const Flags &flags) -> std::shared_ptr<nlohmann::json>
 
     WriteJsonToFile(json, kJsonName);
 
+    std::cout << kJsonName << " generated\n";
+
     return json;
 }
 

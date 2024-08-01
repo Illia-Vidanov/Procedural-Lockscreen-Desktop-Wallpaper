@@ -13,35 +13,108 @@
 #include "Constants.hpp"
 #include "JsonFunctions.hpp"
 
+constexpr static LPCWSTR kPersonalizationFolder = L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\PersonalizationCSP";
+constexpr static LPCWSTR kImagePathKey = L"LockScreenImagePath";
+
 // Setting up registry keys
 void Setup(const Flags &flags)
 {
-    if(!flags.Contains("-i"))
+    bool cleaning = false;
+
+    // Cleaning
+    if(flags.Contains("-clear_all"))
     {
-        CheckIntegrity();
-        std::cout << "Integrity checked\n";
+        RemoveFiles();
+        RemoveRegistry();
+        RemoveTask(flags);
+        std::cout << "Everythin is cleaned\n";
+        return;
     }
+
+    if(flags.Contains("-clear_files"))
+    {
+        cleaning = true;
+        RemoveFiles();
+    }
+
+    if(flags.Contains("-clear_registry"))
+    {
+        cleaning = true;
+        RemoveRegistry();
+    }
+
+    if(flags.Contains("-clear_task"))
+    {
+        cleaning = true;
+        RemoveTask(flags);
+    }
+
+    if(cleaning)
+        return;
+
+    if(!flags.Contains("-i"))
+        CheckIntegrity();
 
     if(!flags.Contains("-j"))
-    {
         InitializeJson(flags);
-        std::cout << kJsonName << " generated\n";
-    }
 
     if(!flags.Contains("-r"))
-    {
         SetupRegistry();
-        std::cout << "Registry keys set up\n";
-    }
 
     if(!flags.Contains("-g"))
         InitialGenerate(flags); // Handels output on its own
 
     if(!flags.Contains("-t"))
-    {
         AddTaskToScheduler(flags);
-        std::cout << "Task added to task scheduler\n";
+
+    std::cout << "Everything is setup\n";
+}
+
+void RemoveFiles()
+{
+    std::filesystem::remove(kJsonName);
+    std::filesystem::remove(kImageName);
+    std::cout << "Files removed\n";
+}
+
+void RemoveRegistry()
+{
+    winreg::RegResult res;
+    winreg::RegKey key;
+
+    res = key.TryOpen(HKEY_LOCAL_MACHINE, kPersonalizationFolder);
+    if(res.Code() == ERROR_FILE_NOT_FOUND)
+        return;
+    else if(!res)
+    {
+        std::wcout << L"Unable to open registry folder to delete registry key \'" << kPersonalizationFolder << L"\'\n"
+                      L"Error: " << res.ErrorMessage() << L"\n"
+                      L"Try opening with administrator rights\n";
+        return;
     }
+
+    res = key.TryDeleteValue(kImagePathKey);
+    if(!res)
+    {
+        std::wcout << L"Unable to delete registry value \'" << kImagePathKey << L"\'\n"
+                      L"Error: " << res.ErrorMessage() << L"\n";
+        return;
+    }
+
+    std::cout << "Registry keys removed\n";
+}
+
+void RemoveTask(const Flags &flags)
+{
+    const std::string task_name = flags.Contains("-task_name") ? flags.Get("-task_name") : kDefTaskName;
+    const std::string powershell_path = flags.Contains("-powershell_path") ? flags.Get("-powershell_path") : kDefPowershellPath;
+
+    std::string args("-Command \"Unregister-ScheduledTask -TaskName \\\"");
+    args += task_name;
+    args += "\\\" -Confirm:$false -ErrorAction SilentlyContinue\"";
+    ExecuteProgram(powershell_path.c_str(), &args[0]);
+
+    std::cout << "Task removed\n";
 }
 
 void CheckIntegrity()
@@ -52,13 +125,12 @@ void CheckIntegrity()
                     "Terminating";
         std::terminate();
     }
+
+    std::cout << "Integrity checked\n";
 }
 
 void SetupRegistry()
 {
-    constexpr static LPCWSTR kPersonalizationFolder = L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\PersonalizationCSP";
-    constexpr static LPCWSTR kImagePathKey = L"LockScreenImagePath";
-
     winreg::RegResult res;
     winreg::RegKey key;
 
@@ -92,6 +164,8 @@ void SetupRegistry()
                       L"Error: " << res.ErrorMessage() << '\n';
         return;
     }
+
+    std::cout << "Registry keys set up\n";
 }
 
 void InitialGenerate(const Flags &flags)
@@ -109,9 +183,9 @@ void AddTaskToScheduler(const Flags &flags)
     const std::string powershell_path = flags.Contains("-powershell_path") ? flags.Get("-powershell_path") : kDefPowershellPath;
 
     std::string args("-Command \"Unregister-ScheduledTask -TaskName \\\"");
-    args += kDefTaskName;
+    args += task_name;
     args += "\\\" -Confirm:$false -ErrorAction SilentlyContinue; Register-ScheduledTask -TaskName \\\"";
-    args += kDefTaskName;
+    args += task_name;
     args += "\\\" -Trigger (New-CimInstance -CimClass (Get-CimClass -Namespace ROOT\\Microsoft\\Windows\\TaskScheduler -ClassName MSFT_TaskSessionStateChangeTrigger) -Property @{StateChange = 8";
 
     if(flags.Contains("-user_name"))
@@ -127,4 +201,6 @@ void AddTaskToScheduler(const Flags &flags)
     args += std::filesystem::current_path().string();
     args += "\\\") -Settings (New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -StartWhenAvailable)\"";
     ExecuteProgram(powershell_path.c_str(), &args[0]);
+
+    std::cout << "Task added to task scheduler\n";
 }
