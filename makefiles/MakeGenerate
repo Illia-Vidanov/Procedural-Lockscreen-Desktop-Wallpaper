@@ -10,7 +10,7 @@ OBJSDIR := build/objs
 APP_NAME := Generate.exe
 DEBUG := -g
 COMPILER := g++
-FLAGS := -Wall -Wextra -Wdeprecated -pedantic-errors -fmax-errors=10 -Wshadow -std=c++17 #-funroll-loops
+FLAGS := -Wall -Wextra -Wdeprecated -pedantic-errors -fmax-errors=10 -Wshadow -std=c++17 -static #-funroll-loops
 LIBS := -llua -lsimdjson
 INCLUDES := -I$(SOURCEDIR) -I$(SOURCEDIR)/..
 ARGS :=
@@ -22,7 +22,7 @@ ADDITIONAL_DEPENDENCIES :=
 # Only one type is allowed 
 SOURCE_FILES_EXTENTION := cpp
 # Needed for checking if makefile has changed
-MAKEFILE_NAME := makefile
+MAKEFILE_NAME := makefiles/MakeGenerate
 .DEFAULT_GOAL := compile
 
 
