@@ -12,12 +12,17 @@
  image:
  - '-w=(number)' and '-h=(number)' - set custom width and height for the image respectevly
  skips:
- 2. '-r' - skip setup of registry keys on windows (part that requires administrator rights)
- 3. '-g' - skip setup of initial call of Generate.exe (use it if "Image.png" already exists and you don't want it to be regenerated)
- 4. '-j' - skip setup of json (use it if you made some changes in json and don't want it to be overwritten)
- 5. '-i' - skip integrity check
- 6. '-t' - skip setup of task in task scheduler (part that requires administrator rights)
+ - '-r' - skip setup of registry keys on windows (part that requires administrator rights)
+ - '-g' - skip setup of initial call of Generate.exe (use it if "Image.png" already exists and you don't want it to be regenerated)
+ - '-j' - skip setup of json (use it if you made some changes in json and don't want it to be overwritten)
+ - '-i' - skip integrity check
+ - '-t' - skip setup of task in task scheduler (part that requires administrator rights)
  clearing:
+ task scheduler:
+ - '-user_name=(user name)' - set user name who's login will change lock screen image (if empty login of any user will generate new image)
+ - '-powershell_path=(path to powershell.exe)' - set custom path to powershell executable (currently it is required to setup task in task scheduler)
+ - '-task_name=(task name)' - set custom name for the task in task scheduler (I personally don't know who will use this feature, but for people who use task scheduler it might be useful. By default task name is "Generate Lock Screen Image")
+
 
  ### Creating own scripts:
  - Script must have extension ".lua" or ".exe" and be located at 'scripts' folder in the same directory as Generate.exe
@@ -36,6 +41,6 @@
 
  ### TODO:
  - [x] Add embeded manifest
- - [ ] Automatically add task to task schduler
+ - [x] Automatically add task to task schduler
  - [ ] Add clean up functions (remove registry keys, clear all files, remove task from task scheduler)
  - [ ] More default scripts!

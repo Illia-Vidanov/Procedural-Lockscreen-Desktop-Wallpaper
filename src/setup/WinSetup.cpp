@@ -83,7 +83,7 @@ void SetupRegistry()
         return;
     }
 
-    std::wstring image_path = std::filesystem::current_path().wstring() + kImageNameW;
+    const std::wstring image_path = AddCurrentPathToString(kImageNameW);
     res = key.TrySetStringValue(kImagePathKey, image_path);
     // If wasn't able to set value
     if(!res)
@@ -102,20 +102,29 @@ void InitialGenerate(const Flags &flags)
 
 void AddTaskToScheduler(const Flags &flags)
 {
+    // At first I wanted to use windows' library (taskschd.h), but it turned out that mingw-w64 tries to be similar to linux systems so this library isn't full here (it misses ILogonTrigger)
+    // So I found a workaround by calling a powershell function instead
+
+    const std::string task_name = flags.Contains("-task_name") ? flags.Get("-task_name") : kDefTaskName;
+    const std::string powershell_path = flags.Contains("-powershell_path") ? flags.Get("-powershell_path") : kDefPowershellPath;
+
     std::string args("-Command \"Unregister-ScheduledTask -TaskName \\\"");
     args += kDefTaskName;
     args += "\\\" -Confirm:$false -ErrorAction SilentlyContinue; Register-ScheduledTask -TaskName \\\"";
     args += kDefTaskName;
     args += "\\\" -Trigger (New-CimInstance -CimClass (Get-CimClass -Namespace ROOT\\Microsoft\\Windows\\TaskScheduler -ClassName MSFT_TaskSessionStateChangeTrigger) -Property @{StateChange = 8";
 
-    //args += "; UserId = \\\"";
-    //args += "Ілля";
-    //args += "\\\"";
+    if(flags.Contains("-user_name"))
+    {
+        args += "; UserId = \\\"";
+        args += flags.Get("-user_name");
+        args += "\\\"";
+    }
 
     args += "} -ClientOnly) -Action (New-ScheduledTaskAction -Execute \\\"";
     args += kGenerateName;
     args += "\\\" -WorkingDirectory \\\"";
     args += std::filesystem::current_path().string();
     args += "\\\") -Settings (New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -StartWhenAvailable)\"";
-    ExecuteProgram("C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe", &args[0]);
+    ExecuteProgram(powershell_path.c_str(), &args[0]);
 }

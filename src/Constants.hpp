@@ -15,6 +15,7 @@ constexpr inline const wchar_t *kImageNameW = L"Image.png";
 constexpr inline const char *kScriptsFolderName = "scripts";
 
 constexpr inline const char *kDefTaskName = "Generate Lock Screen Image";
+constexpr inline const char *kDefPowershellPath = "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe";
 
 
 #endif
