@@ -7,3 +7,4 @@ libs/
 *.json
 *.bat
 *.zip
+*.o
