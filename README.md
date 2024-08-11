@@ -32,6 +32,9 @@
  - '-powershell_path=(path to powershell.exe)' - set custom path to powershell executable (currently it is required to setup task in task scheduler)
  - '-task_name=(task name)' - set custom name for the task in task scheduler (I personally don't know who will use this feature, but for people who use task scheduler it might be useful. By default task name is "Generate Lock Screen Image")
 
+ ### Add/Remove/Disable scripts
+ To add script just copy .exe or .lua file into scripts folder. You can use any subdirectories inside it.
+ If you want to disable script rename it's extension.
 
  ### Creating own scripts:
  - Script must have extension ".lua" or ".exe" and be located at 'scripts' folder in the same directory as Generate.exe
@@ -52,4 +55,9 @@
  - [x] Add embeded manifest
  - [x] Automatically add task to task schduler
  - [x] Add clean up functions (remove registry keys, clear all files, remove task from task scheduler)
+ - [ ] Full support of wide chars
+ - [ ] Gui interface
+ - [ ] Help functions
+ - [ ] Add/Remove functions
+ - [ ] <b>Site for scripts<b>
  - [ ] More default scripts!

@@ -10,7 +10,7 @@ OBJSDIR := build/objs
 APP_NAME := Setup.exe
 DEBUG := -g
 COMPILER := g++
-FLAGS := -Wall -Wextra -Wdeprecated -pedantic-errors -fmax-errors=10 -Wshadow -std=c++17 -static #-funroll-loops
+FLAGS := -Wall -Wextra -Wdeprecated -pedantic-errors -fmax-errors=10 -Wshadow -std=c++17 -static -O3 #-funroll-loops
 LIBS := -lsimdjson -ltaskschd -lole32 -loleaut32 -luuid
 INCLUDES := -I$(SOURCEDIR) -I$(SOURCEDIR)/..
 ARGS :=
