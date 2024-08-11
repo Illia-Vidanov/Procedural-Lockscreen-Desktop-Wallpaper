@@ -10,7 +10,7 @@ OBJSDIR := $(CURDIR)/objs
 APP_NAME := RandomCircles.exe
 DEBUG := -g
 COMPILER := g++
-FLAGS := -Wall -Wextra -Wdeprecated -pedantic-errors -fmax-errors=10 -Wshadow -std=c++17 #-funroll-loops
+FLAGS := -Wall -Wextra -Wdeprecated -pedantic-errors -fmax-errors=10 -Wshadow -std=c++17 -static -O3 #-funroll-loops
 LIBS :=
 INCLUDES := -I$(SOURCEDIR)
 ARGS :=
