@@ -3,6 +3,7 @@
 
 #include <string>
 
+
 struct lua_State;
 
 auto InitializeLua() -> lua_State*;

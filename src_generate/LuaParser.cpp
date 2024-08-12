@@ -5,6 +5,7 @@
 
 #include "Lua.hpp"
 
+
 auto InitializeLua() -> lua_State*
 {
     lua_State *lua = luaL_newstate();

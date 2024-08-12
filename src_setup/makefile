@@ -1,18 +1,18 @@
 # makefile to compile project
 
 # Directories
-SOURCEDIR := src
-IGNORE_DIRS := src/generate
-BUILDDIR := build
-OBJSDIR := build/objs
+SOURCEDIR :=
+IGNORE_DIRS :=
+BUILDDIR := C:/Programming/c++/Procedural-Lockscreen-Desktop-Wallpaper/build
+OBJSDIR := $(BUILDDIR)/objs
 
 # Variables
 APP_NAME := Setup.exe
 DEBUG := -g
 COMPILER := g++
-FLAGS := -Wall -Wextra -Wdeprecated -pedantic-errors -fmax-errors=10 -Wshadow -std=c++17 -static -O3 #-funroll-loops
+FLAGS := -Wall -Wextra -Wdeprecated -pedantic-errors -fmax-errors=10 -Wshadow -std=c++17 -static -O3
 LIBS := -lsimdjson -ltaskschd -lole32 -loleaut32 -luuid
-INCLUDES := -I$(SOURCEDIR) -I$(SOURCEDIR)/..
+INCLUDES := -IC:/Programming/c++/Procedural-Lockscreen-Desktop-Wallpaper/src
 ARGS :=
 ECHO := @
 PROGRESS := 1
@@ -22,7 +22,7 @@ ADDITIONAL_DEPENDENCIES :=
 # Only one type is allowed 
 SOURCE_FILES_EXTENTION := cpp
 # Needed for checking if makefile has changed
-MAKEFILE_NAME := makefiles/MakeSetup
+MAKEFILE_NAME := makefile
 .DEFAULT_GOAL := compile
 
 

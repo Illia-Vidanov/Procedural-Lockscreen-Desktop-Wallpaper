@@ -1,8 +1,7 @@
-#include "JsonFunctions.hpp"
+#include "JsonParser.hpp"
 
 #include <iostream>
 #include <string>
-#include <filesystem>
 #include <fstream>
 #include <memory>
 #include <exception>
@@ -13,6 +12,8 @@
 #include "Constants.hpp"
 #include "FlagParser.hpp"
 #include "ImageData.hpp"
+#include "StringUtils.hpp"
+
 
 auto InitializeJson(const Flags &flags) -> std::shared_ptr<nlohmann::json>
 {
@@ -112,14 +113,4 @@ void WriteJsonToFile(std::shared_ptr<nlohmann::json> json, const std::string &pa
 
     file << std::setw(4) << (*json);
     file.close();
-}
-
-auto AddCurrentPathToString(const std::string &str) -> std::string
-{
-    return std::filesystem::current_path().string() + "\\" + str;
-}
-
-auto AddCurrentPathToString(const std::wstring &str) -> std::wstring
-{
-    return std::filesystem::current_path().wstring() + L"\\" + str;
 }

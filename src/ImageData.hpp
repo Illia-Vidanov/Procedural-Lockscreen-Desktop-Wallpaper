@@ -3,6 +3,7 @@
 
 #include <string>
 
+
 // Struct with width, height and image path
 struct ImageData
 {

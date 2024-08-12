@@ -16,7 +16,9 @@
 #include "CreateImage.hpp"
 #include "LuaParser.hpp"
 #include "Constants.hpp"
-#include "JsonFunctions.hpp"
+#include "JsonParser.hpp"
+#include "StringUtils.hpp"
+
 
 void GenerateImage(const Flags &flags)
 {
@@ -75,7 +77,7 @@ std::vector<std::string> GatherScripts()
     {
         const auto &ext = dir_entry.path().extension();
         if(ext == ".exe" || ext == ".lua")
-            scripts.emplace_back(dir_entry.path().string());
+            scripts.emplace_back(dir_entry.path().generic_u8string());
     }
 
     return scripts;

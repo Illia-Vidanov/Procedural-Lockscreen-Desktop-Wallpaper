@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 
+
 class Flags;
 
 void GenerateImage(const Flags &flags);

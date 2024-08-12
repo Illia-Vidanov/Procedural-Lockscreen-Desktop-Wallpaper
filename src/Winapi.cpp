@@ -1,11 +1,15 @@
-#include "Winapi.hpp"
+#include "WinApi.hpp"
 
 #include <windows.h>
 #include <iostream>
 #include <exception>
 
-int ExecuteProgram(const char *program_path, char *args)
+
+auto ExecuteProgram(const char *program_path, char *args) -> int
 {
+    const wchar_t *program_path_w = ToWideChar(program_path);
+    wchar_t *args_w = ToWideChar(args);
+
     SECURITY_ATTRIBUTES sa = { sizeof(SECURITY_ATTRIBUTES), NULL, TRUE };
 
     HANDLE h_read, h_write;
@@ -16,7 +20,7 @@ int ExecuteProgram(const char *program_path, char *args)
     }
 
     PROCESS_INFORMATION pi;
-    STARTUPINFOA si;
+    STARTUPINFOW si;
 
     ZeroMemory(&pi, sizeof(pi));
     ZeroMemory(&si, sizeof(si));
@@ -25,10 +29,10 @@ int ExecuteProgram(const char *program_path, char *args)
     si.hStdOutput = h_write;
     si.dwFlags |= STARTF_USESTDHANDLES;
 
-    if(!CreateProcessAsUserA(
+    if(!CreateProcessAsUserW(
         NULL,
-        program_path,
-        args,
+        program_path_w,
+        args_w,
         NULL,
         NULL,
         TRUE,
@@ -72,4 +76,20 @@ void TerminateAdmin()
     std::wcout << L"Termination\n"
                   L"Try opening with administrator rights\n";
     std::terminate();
+}
+
+auto ToWideChar(const char *str) -> wchar_t*
+{
+    const int string_size = strlen(str);
+    const int buffer_size = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, str, string_size, nullptr, 0);
+    wchar_t *result = new wchar_t[buffer_size];
+
+    if(!MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, str, string_size, result, buffer_size))
+    {
+        std::cout << "Wasn't able to convert \'" << str << "\' to wide char\n"
+                     "Terminating";
+        std::terminate();
+    }
+
+    return result;
 }

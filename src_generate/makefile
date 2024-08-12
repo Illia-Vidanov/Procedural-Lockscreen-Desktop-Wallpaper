@@ -1,10 +1,10 @@
 # makefile to compile project
 
 # Directories
-SOURCEDIR := src
-IGNORE_DIRS := src/setup
-BUILDDIR := build
-OBJSDIR := build/objs
+SOURCEDIR :=
+IGNORE_DIRS :=
+BUILDDIR := c/Programming/c++/Procedural-Lockscreen-Desktop-Wallpaper/build
+OBJSDIR := $(BUILDDIR)/objs
 
 # Variables
 APP_NAME := Generate.exe
@@ -12,7 +12,7 @@ DEBUG := -g
 COMPILER := g++
 FLAGS := -Wall -Wextra -Wdeprecated -pedantic-errors -fmax-errors=10 -Wshadow -std=c++17 -O3 -static #-funroll-loops
 LIBS := -llua -lsimdjson
-INCLUDES := -I$(SOURCEDIR) -I$(SOURCEDIR)/..
+INCLUDES :=
 ARGS :=
 ECHO := @
 PROGRESS := 1
@@ -22,7 +22,7 @@ ADDITIONAL_DEPENDENCIES :=
 # Only one type is allowed 
 SOURCE_FILES_EXTENTION := cpp
 # Needed for checking if makefile has changed
-MAKEFILE_NAME := makefiles/MakeGenerate
+MAKEFILE_NAME := makefile
 .DEFAULT_GOAL := compile
 
 

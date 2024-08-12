@@ -3,10 +3,6 @@
 
 class Flags;
 
-void RemoveFiles();
-void RemoveRegistry();
-void RemoveTask(const Flags &flags);
-
 void Setup(const Flags &flags);
 void CheckIntegrity();
 void SetupRegistry();
