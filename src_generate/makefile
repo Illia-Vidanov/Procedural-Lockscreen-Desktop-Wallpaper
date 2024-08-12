@@ -1,9 +1,9 @@
 # makefile to compile project
 
 # Directories
-SOURCEDIR :=
+SOURCEDIR := .
 IGNORE_DIRS :=
-BUILDDIR := c/Programming/c++/Procedural-Lockscreen-Desktop-Wallpaper/build
+BUILDDIR := C:/Programming/c++/Procedural-Lockscreen-Desktop-Wallpaper/build
 OBJSDIR := $(BUILDDIR)/objs
 
 # Variables
@@ -12,7 +12,7 @@ DEBUG := -g
 COMPILER := g++
 FLAGS := -Wall -Wextra -Wdeprecated -pedantic-errors -fmax-errors=10 -Wshadow -std=c++17 -O3 -static #-funroll-loops
 LIBS := -llua -lsimdjson
-INCLUDES :=
+INCLUDES := -IC:/Programming/c++/Procedural-Lockscreen-Desktop-Wallpaper/src
 ARGS :=
 ECHO := @
 PROGRESS := 1

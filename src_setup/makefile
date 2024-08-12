@@ -1,7 +1,7 @@
 # makefile to compile project
 
 # Directories
-SOURCEDIR :=
+SOURCEDIR := .
 IGNORE_DIRS :=
 BUILDDIR := C:/Programming/c++/Procedural-Lockscreen-Desktop-Wallpaper/build
 OBJSDIR := $(BUILDDIR)/objs

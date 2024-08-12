@@ -21,11 +21,11 @@ constexpr inline const char *kScriptsFolderName = "scripts";
 constexpr inline const char *kDefTaskName = "Generate Wallpaper";
 constexpr inline const char *kDefPowershellPath = "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe";
 
-constexpr inline const char *kCleanFlag = "-clean";
-constexpr inline const char *kCleanAllFlag = "-clean-all";
-constexpr inline const char *kCleanRegFlag = "-clean-registry";
-constexpr inline const char *kCleanFilesFlag = "-clean-files";
-constexpr inline const char *kCleanTaskFlag = "-clean-task";
+constexpr inline const char *kClearFlag = "-clear";
+constexpr inline const char *kClearAllFlag = "-clear-all";
+constexpr inline const char *kClearRegistryFlag = "-clear-registry";
+constexpr inline const char *kClearFilesFlag = "-clear-files";
+constexpr inline const char *kClearTaskFlag = "-clear-task";
 
 constexpr inline const char *kHelpFlag = "-help";
 
