@@ -75,6 +75,8 @@ void SetupRegistry()
     }
 
     const std::wstring image_path = AddCurrentPathToString(kImageNameW);
+    std::replace(image_path.begin(), image_path.end(), '/', '\\');
+    
     res = key.TrySetStringValue(kImagePathKey, image_path);
     // If wasn't able to set value
     if(!res)
