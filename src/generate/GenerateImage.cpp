@@ -105,7 +105,7 @@ void ProcessLua(const ImageData &image_data, const std::string &script)
 {
     const auto lua = InitializeLua();
 
-    CreateImage(image_data, AddPadding(image_data.width, image_data.height, ExecuteLua(lua, image_data.width, image_data.height, script)));
+    CreateImage(image_data, ExecuteLua(lua, image_data.width, image_data.height, script));
     PopReturnLua(lua);
     
     // lua handles memory so no need to delete return of 'ExecuteLua'

@@ -17,8 +17,8 @@
 
 auto InitializeJson(const Flags &flags) -> std::shared_ptr<nlohmann::json>
 {
-    int width = std::atoi(flags.Get("-w").c_str());
-    int height = std::atoi(flags.Get("-h").c_str());
+    int width = std::atoi(flags.Get(kWidthFlag).c_str());
+    int height = std::atoi(flags.Get(kHeightFlag).c_str());
 
     if(width <= 0 || height <= 0)
         GetScreenResolution(width, height);

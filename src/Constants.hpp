@@ -39,4 +39,7 @@ constexpr inline const char *kUserNameFlag = "-user-name";
 constexpr inline const char *kPowershellPathFlag = "-powershell-path";
 constexpr inline const char *kTaskNameFlag = "-task-name";
 
+constexpr inline const char *kWidthFlag = "-width";
+constexpr inline const char *kHeightFlag = "-height";
+
 #endif // CONSTANTS_HPP

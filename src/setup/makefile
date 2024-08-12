@@ -1,18 +1,18 @@
 # makefile to compile project
 
 # Directories
-SOURCEDIR := .
-IGNORE_DIRS :=
-BUILDDIR := C:/Programming/c++/Procedural-Lockscreen-Desktop-Wallpaper/build
+SOURCEDIR := src
+IGNORE_DIRS := src/generate
+BUILDDIR := build
 OBJSDIR := $(BUILDDIR)/objs
 
 # Variables
 APP_NAME := Setup.exe
 DEBUG := -g
 COMPILER := g++
-FLAGS := -Wall -Wextra -Wdeprecated -pedantic-errors -fmax-errors=10 -Wshadow -std=c++17 -static -O3
-LIBS := -lsimdjson -ltaskschd -lole32 -loleaut32 -luuid
-INCLUDES := -IC:/Programming/c++/Procedural-Lockscreen-Desktop-Wallpaper/src
+FLAGS := -Wall -Wextra -Wdeprecated -pedantic-errors -fmax-errors=10 -Wshadow -std=c++17 -O3 -static #-funroll-loops
+LIBS := -llua -lsimdjson
+INCLUDES := -I$(SOURCEDIR)
 ARGS :=
 ECHO := @
 PROGRESS := 1
@@ -22,7 +22,7 @@ ADDITIONAL_DEPENDENCIES :=
 # Only one type is allowed 
 SOURCE_FILES_EXTENTION := cpp
 # Needed for checking if makefile has changed
-MAKEFILE_NAME := makefile
+MAKEFILE_NAME := src/generate/makefile
 .DEFAULT_GOAL := compile
 
 
@@ -103,4 +103,8 @@ clean_obj_files:
 	$(ECHO)rm -r $(OBJSDIR)
 
 clean: clean_obj_files
-	$(ECHO)rm -r $(BUILDDIR)
+ifdef $(APP_NAME)
+	$(ECHO)rm -r $(BUILDDIR)/$(APP_NAME)
+else
+	
+endif

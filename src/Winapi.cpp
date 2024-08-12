@@ -3,12 +3,15 @@
 #include <windows.h>
 #include <iostream>
 #include <exception>
+#include <algorithm>
 
 
 auto ExecuteProgram(const char *program_path, char *args) -> int
 {
-    const wchar_t *program_path_w = ToWideChar(program_path);
+    wchar_t *program_path_w = ToWideChar(program_path);
     wchar_t *args_w = ToWideChar(args);
+    std::replace(program_path_w, program_path_w + wcslen(program_path_w), L'/', L'\\');
+    std::replace(args_w, args_w + wcslen(args_w), L'/', L'\\');
 
     SECURITY_ATTRIBUTES sa = { sizeof(SECURITY_ATTRIBUTES), NULL, TRUE };
 
@@ -43,8 +46,9 @@ auto ExecuteProgram(const char *program_path, char *args) -> int
         &pi
     ))
     {
-        std::cout << "Wasn't able to create child process in order to open \"" << program_path << "\" with error " << GetLastError() << '\n';
-        TerminateAdmin();
+        std::wcout << L"Wasn't able to create child process in order to open \"" << program_path << L"\" with arguments \"" << args << "\" with error " << GetLastError() << '\n'
+                   << L"Termination";
+        std::terminate();
     }
 
     //WaitForSingleObject(&pi, INFINITE);
@@ -80,7 +84,7 @@ void TerminateAdmin()
 
 auto ToWideChar(const char *str) -> wchar_t*
 {
-    const int string_size = strlen(str);
+    const int string_size = strlen(str) + 1; // + 1 to account for \0
     const int buffer_size = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, str, string_size, nullptr, 0);
     wchar_t *result = new wchar_t[buffer_size];
 

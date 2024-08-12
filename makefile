@@ -2,7 +2,7 @@ all: setup generate
 	
 
 setup:
-	@cd src_setup && $(MAKE)
+	$(MAKE) -f src/setup/makefile
 
 generate:
-	@cd src_generate && $(MAKE)
+	$(MAKE) -f src/generate/makefile

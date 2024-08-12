@@ -66,7 +66,7 @@ inline auto GetRandomColor() -> Color
     return Color(RandomInRange(0, 255), RandomInRange(0, 255), RandomInRange(0, 255));
 }
 
-inline auto AddPadding(const int width, const int height, const void *data) -> void*
+inline auto AddPadding(const int width, const int height, const void *data) -> uint8_t*
 {
     const int kStride = GetStride(width);
     const int kDataRow = width * kImageDepth;
@@ -153,11 +153,17 @@ void DrawCircle(int width, int height, uint8_t *data, const Circle &circle)
 
 int main(int argc, char **argv)
 {
-	std::srand(std::time(NULL));
-	
+	if(argc != 3)
+	{
+		std::cout << "Wrong number of parametrs\n";
+		return -1;
+	}
+
 	int width = std::atoi(argv[0]);
 	int height = std::atoi(argv[1]);
 	const char *path = argv[2];
+
+	std::srand(std::time(NULL));
 
     const int data_length = width * kImageDepth * height;
 	uint8_t *data = new uint8_t[data_length];
@@ -169,8 +175,12 @@ int main(int argc, char **argv)
 	std::random_shuffle(circles.begin(), circles.end());
 	for(std::size_t i = 0; i < circles.size(); i++)
 		DrawCircle(width, height, data, circles[i]);
-	
-	stbi_write_png(path, width, height, kImageDepth, AddPadding(width, height, data), GetStride(width));
+
+	uint8_t *padded_data = AddPadding(width, height, data);
+	stbi_write_png(path, width, height, kImageDepth, padded_data, GetStride(width));
+
+	delete[] data;
+	delete[] padded_data;
 	
 	return 0;
 }

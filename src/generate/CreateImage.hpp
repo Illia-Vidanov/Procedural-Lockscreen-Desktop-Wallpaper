@@ -8,7 +8,7 @@
 
 
 void CreateImage(const ImageData &image_data, const void *data);
-auto AddPadding(const int width, const int height, const void *data) -> void*;
+auto AddPadding(const int width, const int height, const void *data) -> uint8_t*;
 auto GetStride(const int width) -> int;
 
 #endif // CREATE_IMAGE_HPP
