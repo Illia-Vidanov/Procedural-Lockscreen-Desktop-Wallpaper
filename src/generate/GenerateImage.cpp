@@ -18,9 +18,10 @@
 #include "Constants.hpp"
 #include "JsonParser.hpp"
 #include "StringUtils.hpp"
+#include "ScriptManager.hpp"
 
 
-void GenerateImage(const Flags &flags)
+void GenerateImage(const Flags &flags, const ScriptManager &script_manager)
 {
     std::shared_ptr<nlohmann::json> json;
 
@@ -35,26 +36,22 @@ void GenerateImage(const Flags &flags)
     ImageData image_data = GetImageDataFromJson(json);
     std::cout << "Data from json was succesfully read\n";
 
-    std::vector<std::string> scripts = GatherScripts();
+    const ScriptManager::MapType::value_type *key_value = script_manager.GetRandom(GetLastScriptFromJson(json));
 
-    if(scripts.size() == 0)
+    if(key_value == nullptr)
     {
         GenerateBlanckImage(image_data);
-        std::cout << "No scripts found, blanck image generated\n";
+        std::cout << "No scripts found, blank image generated\n";
+        return;
     }
 
-    int index = effolkronium::random_static::get(0, static_cast<int>(scripts.size()) - 1);
-    if(scripts.size() > 1 && GetLastScriptFromJson(json) == scripts[index])
-    {
-        std::swap(scripts[index], scripts.back());
-        index = effolkronium::random_static::get(0, static_cast<int>(scripts.size()) - 2);
-    }
+    std::string script = key_value->second.generic_u8string();
+    std::cout << "Script choosen: \"" << script << "\"\n";
 
-    (*json)[kLastScriptKey] = scripts[index];
+    (*json)[kLastScriptKey] = key_value->first;
     WriteJsonToFile(json, kJsonName);
-    std::cout << "Script choosen: \"" << scripts[index] << "\"\n";
 
-    ProcessScript(image_data, scripts[index]);
+    ProcessScript(image_data, script);
     std::cout << "Succesfully created image at \'" << image_data.path << "\' with resolution: " << image_data.width << 'x' << image_data.height << '\n';
 }
 
@@ -68,19 +65,6 @@ void GenerateBlanckImage(const ImageData &image_data)
 
     delete[] data;
     return;
-}
-
-std::vector<std::string> GatherScripts()
-{
-    std::vector<std::string> scripts;
-    for(const auto &dir_entry : std::filesystem::recursive_directory_iterator(AddCurrentPathToString(kScriptsFolderName)))
-    {
-        const auto &ext = dir_entry.path().extension();
-        if(ext == ".exe" || ext == ".lua")
-            scripts.emplace_back(dir_entry.path().generic_u8string());
-    }
-
-    return scripts;
 }
 
 void ProcessScript(const ImageData &image_data, const std::string &script)

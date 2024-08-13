@@ -42,4 +42,12 @@ constexpr inline const char *kTaskNameFlag = "-task-name";
 constexpr inline const char *kWidthFlag = "-width";
 constexpr inline const char *kHeightFlag = "-height";
 
+constexpr inline const char *kScriptDisableFlag = "-script-disable";
+constexpr inline const char *kScriptEnableFlag = "-script-enable";
+constexpr inline const char *kScriptDeleteFlag = "-script-delete";
+constexpr inline const char *kScriptListFlag = "-script-list";
+constexpr inline const char *kScriptDisableAllFlag = "-script-disable-all";
+constexpr inline const char *kScriptEnableAllFlag = "-script-enable-all";
+constexpr inline const char *kScriptDeleteAllFlag = "-script-delete-all";
+
 #endif // CONSTANTS_HPP

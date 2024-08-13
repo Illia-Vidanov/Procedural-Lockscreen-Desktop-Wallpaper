@@ -6,7 +6,7 @@
  In order to set custom lock screen image you have to craete key 'LockScreenImagePath' in folder 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP'. After that you can just change image in that path to change lockscreen image.
  Also to generate image on every login program sets up task in task scheduler with trigger 'OnWorkstationUnlock' with scrript Generate.exe to execute
  Generate.exe chooses random script from folder scripts and parses it if it's lua or just executes it if it's .exe file.
-
+ 
 
  ### Instalation:
  1. Download files
@@ -35,6 +35,14 @@
  - '-user-name=(user name)' - set user name who's login will change lock screen image (if empty login of any user will generate new image)
  - '-powershell-path=(path to powershell.exe)' - set custom path to powershell executable, default path is 'C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe' (currently it is required to setup task in task scheduler)
  - '-task-name=(task name)' - set custom name for the task in task scheduler (I personally don't know who will use this feature, but for people who use task scheduler it might be useful. By default task name is 'Generate Wallpaper')
+ <b>Scripts</b>:
+ - '-script-list' - print list of scripts avalible with thier statuses
+ - '-script-disable=(script name as in script list)' - disable scirpt (basicly it adds '_dis' to extension of file)
+ - '-scritp-enable=(script name as in script list)' - enable scirpt
+ - '-script-delete=(script name as in script list)' - delete script
+ - '-script-disable-all=(script name as in script list)' - disable all scirpts (basicly it adds '_dis' to extension of file)
+ - '-scritp-enable-all=(script name as in script list)' - enable all scirpts
+ - '-script-delete-all=(script name as in script list)' - delete all scripts
 
  ### Generate flags:
  <b>General</b>:
@@ -71,6 +79,6 @@
  - [ ] Function specifying custom image location
  - [ ] Gui interface
  - [x] Help functions
- - [ ] Add/Remove functions
+ - [x] Script managing functions
  - [ ] <b>Site for scripts</b>
  - [ ] More default scripts!

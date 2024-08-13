@@ -74,7 +74,7 @@ void SetupRegistry()
         return;
     }
 
-    const std::wstring image_path = AddCurrentPathToString(kImageNameW);
+    std::wstring image_path = AddCurrentPathToString(std::wstring(kImageNameW));
     std::replace(image_path.begin(), image_path.end(), '/', '\\');
     
     res = key.TrySetStringValue(kImagePathKey, image_path);
@@ -91,7 +91,7 @@ void SetupRegistry()
 
 void InitialGenerate(const Flags &flags)
 {
-    if(ExecuteProgram((AddCurrentPathToString(kGenerateName)).c_str(), &flags.GetArgsAsString()[0]))
+    if(ExecuteProgram((AddCurrentPathToString(std::string(kGenerateName))).c_str(), &flags.GetArgsAsString()[0]))
         std::cout << "Error generating initial image\n";
 }
 

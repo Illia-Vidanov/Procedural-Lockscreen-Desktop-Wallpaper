@@ -6,6 +6,8 @@ auto ExecuteProgram(const char *program_path, char *args) -> int;
 void TerminateAdmin();
 void GetScreenResolution(int &width, int &height);
 
-auto ToWideChar(const char *str) -> wchar_t *;
+auto Utf8ToWideChar(const char *str) -> wchar_t*;
+auto WideCharToUtf8(const wchar_t *str) -> char*;
+auto ConvertArgsToUtf8(int argc, const char **argv) -> const char**;
 
 #endif // WIN_API_HPP

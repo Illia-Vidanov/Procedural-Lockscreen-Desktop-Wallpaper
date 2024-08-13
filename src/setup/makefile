@@ -22,7 +22,7 @@ ADDITIONAL_DEPENDENCIES :=
 # Only one type is allowed 
 SOURCE_FILES_EXTENTION := cpp
 # Needed for checking if makefile has changed
-MAKEFILE_NAME := src/generate/makefile
+MAKEFILE_NAME := src/setup/makefile
 .DEFAULT_GOAL := compile
 
 
@@ -44,7 +44,7 @@ OBJS := $(foreach file,$(SOURCES),$(file:$(SOURCEDIR)/%.$(SOURCE_FILES_EXTENTION
 
 # Execute before/after compile
 EXECUTE_BEFORE_COMPILE :=
-EXECUTE_AFTER_COMPILE := C:/Programming/WindowsSDK/bin/10.0.26100.0/x86/mt.exe -manifest Setup.exe.manifest -outputresource:$(BUILDDIR)/Setup.exe;
+EXECUTE_AFTER_COMPILE := #C:/Programming/WindowsSDK/bin/10.0.26100.0/x86/mt.exe -manifest Setup.exe.manifest -outputresource:$(BUILDDIR)/Setup.exe;
 $(shell $(EXECUTE_BEFORE_COMPILE))
 
 

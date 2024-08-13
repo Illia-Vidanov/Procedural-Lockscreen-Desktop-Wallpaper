@@ -5,11 +5,13 @@
 #include <exception>
 #include <algorithm>
 
+#include "StringUtils.hpp"
+
 
 auto ExecuteProgram(const char *program_path, char *args) -> int
 {
-    wchar_t *program_path_w = ToWideChar(program_path);
-    wchar_t *args_w = ToWideChar(args);
+    wchar_t *program_path_w = Utf8ToWideChar(program_path);
+    wchar_t *args_w = Utf8ToWideChar(args);
     std::replace(program_path_w, program_path_w + wcslen(program_path_w), L'/', L'\\');
     std::replace(args_w, args_w + wcslen(args_w), L'/', L'\\');
 
@@ -65,6 +67,9 @@ auto ExecuteProgram(const char *program_path, char *args) -> int
     CloseHandle(h_read);
     CloseHandle(pi.hProcess);
     CloseHandle(pi.hThread);
+
+    delete[] program_path_w;
+    delete[] args_w;
     
     return exit_code;
 }
@@ -82,7 +87,7 @@ void TerminateAdmin()
     std::terminate();
 }
 
-auto ToWideChar(const char *str) -> wchar_t*
+auto Utf8ToWideChar(const char *str) -> wchar_t*
 {
     const int string_size = strlen(str) + 1; // + 1 to account for \0
     const int buffer_size = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, str, string_size, nullptr, 0);
@@ -96,4 +101,43 @@ auto ToWideChar(const char *str) -> wchar_t*
     }
 
     return result;
+}
+
+auto WideCharToUtf8(const wchar_t *str) -> char*
+{
+    const int string_size = StrLen(str) + 1; // + 1 to account for \0
+    const int buffer_size = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, str, string_size, nullptr, 0, NULL, NULL);
+    char *result = new char[buffer_size];
+
+    if(!WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, str, string_size, result, buffer_size, NULL, NULL))
+    {
+        std::wcout << L"Wasn't able to convert \'" << str << L"\' to utf8\n"
+                      L"Terminating";
+        std::terminate();
+    }
+
+    return result;
+}
+
+auto ConvertArgsToUtf8(int argc, const char **argv) -> const char**
+{
+    const char **utf8_args = new const char *[argc];
+    for(int i = 0; i < argc; i++)
+    {
+        const int string_size = strlen(argv[i]) + 1; // + 1 to account for \0
+        const int buffer_size = MultiByteToWideChar(CP_ACP, MB_ERR_INVALID_CHARS, argv[i], string_size, nullptr, 0);
+        wchar_t *result = new wchar_t[buffer_size];
+
+        if(!MultiByteToWideChar(CP_ACP, MB_ERR_INVALID_CHARS, argv[i], string_size, result, buffer_size))
+        {
+            std::cout << "Wasn't able to convert argument \'" << argv[i] << "\' to wide char\n"
+                        "Terminating";
+            std::terminate();
+        }
+
+        utf8_args[i] = WideCharToUtf8(result);
+        delete[] result;
+    }
+
+    return utf8_args;
 }

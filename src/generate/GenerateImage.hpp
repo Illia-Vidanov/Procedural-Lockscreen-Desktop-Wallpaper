@@ -8,10 +8,10 @@
 
 
 class Flags;
+class ScriptManager;
 
-void GenerateImage(const Flags &flags);
+void GenerateImage(const Flags &flags, const ScriptManager &script_manager);
 void GenerateBlanckImage(const ImageData &image_data);
-std::vector<std::string> GatherScripts();
 void ProcessScript(const ImageData &image_data, const std::string &script);
 void ProcessLua(const ImageData &image_data, const std::string &script);
 void ProcessExe(const ImageData &image_data, const std::string &script);

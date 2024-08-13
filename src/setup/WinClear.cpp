@@ -81,8 +81,8 @@ void RemoveRegistry()
 
 void RemoveTask(const Flags &flags)
 {
-    const std::string task_name = flags.Contains("-task_name") ? flags.Get("-task_name") : kDefTaskName;
-    const std::string powershell_path = flags.Contains("-powershell_path") ? flags.Get("-powershell_path") : kDefPowershellPath;
+    const std::string task_name = flags.Contains(kTaskNameFlag) ? flags.Get(kTaskNameFlag) : kDefTaskName;
+    const std::string powershell_path = flags.Contains(kPowershellPathFlag) ? flags.Get(kPowershellPathFlag) : kDefPowershellPath;
 
     std::string args("-Command \"Unregister-ScheduledTask -TaskName \\\"");
     args += task_name;

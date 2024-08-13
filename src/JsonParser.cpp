@@ -25,7 +25,7 @@ auto InitializeJson(const Flags &flags) -> std::shared_ptr<nlohmann::json>
     
     std::shared_ptr<nlohmann::json> json =
     std::make_shared<nlohmann::json>(nlohmann::json::initializer_list_t{
-        { kPathKey, AddCurrentPathToString(kImageName) },
+        { kPathKey, AddCurrentPathToString(std::string(kImageName)) },
         { kWidthKey, width },
         { kHeightKey, height },
         { kLastScriptKey, "" }
@@ -64,7 +64,7 @@ auto GetImageDataFromJson(std::shared_ptr<nlohmann::json> json) -> ImageData
     {
         //changed = true;
         std::cout << "Path was not found in json\n";
-        (*json)[kPathKey] = path = AddCurrentPathToString(kImageName);
+        (*json)[kPathKey] = path = AddCurrentPathToString(std::string(kImageName));
         std::cout << "Set path to " << path << '\n';
     }
     else
