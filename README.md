@@ -82,3 +82,7 @@
  - [x] Script managing functions
  - [ ] <b>Site for scripts</b>
  - [ ] More default scripts!
+ - [ ] Force reload of lockscreen to avoid black screen???
+ - [ ] Not full blocking only screen off
+ - [ ] Add program to programm listing on windows
+ - [ ] Mac and Linux support
